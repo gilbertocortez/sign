@@ -8,16 +8,17 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save.
+          Let's sign with Web3
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.href = 'http://google.com';
+          }}
         >
-          Learn React
-        </a>
+          Learn React Now
+        </button>
       </header>
     </div>
   );
