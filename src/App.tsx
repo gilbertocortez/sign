@@ -1,24 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+
+import Request_LogIn from './components/req_auth';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Let's sign with Web3
-        </p>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = 'http://google.com';
-          }}
-        >
-          Learn React Now
-        </button>
+        <h1>Crypto Wallet Log In & Signing Example</h1>
+        <h2>Using ReactJS</h2>
+        
+        <Request_LogIn />
       </header>
     </div>
   );
