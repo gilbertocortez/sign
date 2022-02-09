@@ -6,15 +6,8 @@ import { SignTypedDataVersion, recoverTypedSignature } from '@metamask/eth-sig-u
 const Request_Signature = (props: any) => {
     // Step 2:  Once user has authorized the use of its crypto wallet a signature can
     //          be requested
-    const address = props.account;
 
     async function sign_TypedDataV4() {
-        const primaryType = 'Message' as const;
-        const types = {
-            EIP712Domain: [],
-            Message: [{ name: 'data', type: 'string' }],
-        };
-
         const msgParamsOg = {
             domain: {
                 // Defining the chain: 1 - Ethereum Main Net
@@ -83,33 +76,15 @@ const Request_Signature = (props: any) => {
                 }
                 //console.log('TYPED SIGNED:' + JSON.stringify(result.result));
 
-                const recovered = {
-                    data: msgParamsOg,
-                    sig: result.result,
-                };
-                console.log(recovered);
-
                 let signature = result.result;
 
-                // const restored = recoverTypedSignature({
-                //     data: msgParamsOg as any,
-                //     signature,
-                //     version: SignTypedDataVersion.V4,
-                //   });
+                const restored = recoverTypedSignature({
+                    data: msgParamsOg as any,
+                    signature,
+                    version: SignTypedDataVersion.V4,
+                  });
 
-                // console.log(restored);
-
-                // let r = toBuffer(recovered.sig.slice(0, 66))
-                // let s = toBuffer('0x' + recovered.sig.slice(66, 130))
-                // let v = toBuffer('0x' + recovered.sig.slice(130, 132))
-                // let m = toBuffer(rlphash(msgParams));
-
-                // let pub = ecrecover(m, v, r, s);
-                // console.log('Pub: ' + pub);
-
-                // let adr = pubToAddress(pub);
-                // const addr = bufferToHex(adr);
-                // console.log('Address: ' + addr);
+                console.log(restored);
 
             }
         );
