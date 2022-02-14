@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import Request_Signature from './req_sign';
+import RequestSignature from './req_sign';
 
-const Request_LogIn = () => {
+const RequestLogIn = () => {
 
     const [userWalletAddress, setuserWalletAddress] = useState([]);
 
+    // Check for changes in the stored user wallet address (state)
     useEffect(() => {
-        if (userWalletAddress.length != 0) {
+        if (userWalletAddress.length !== 0) {
             console.log('User logged in');
             //console.log(userWalletAddress);
         }
     }, [userWalletAddress]);
 
-    if (userWalletAddress.length == 0) {
+    // If wallet address has not been stored
+    // Request user to log in
+    if (userWalletAddress.length === 0) {
         return (
             <div>
                 <p>
@@ -41,15 +44,16 @@ const Request_LogIn = () => {
             </div>
         );
     } else {
+    // If wallet address is store, then allow user to request signature
         return (
             <div>
                 <p>
                     Logged in with {userWalletAddress}
                 </p>
-                <Request_Signature account={userWalletAddress} />
+                <RequestSignature account={userWalletAddress} />
             </div>
         );
     }
 };
 
-export default Request_LogIn;
+export default RequestLogIn;

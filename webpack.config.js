@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
   mode: "development", // "production" | "development" | "none"
@@ -10,13 +11,11 @@ module.exports = {
   // and webpack starts bundling
   output: {
     // options related to how webpack emits results
-    path: path.resolve(__dirname, "public"), // string (default)
+    path: path.resolve(__dirname, "dist"), // string (default)
     // the target directory for all output files
     // must be an absolute path (use the Node.js path module)
     filename: "sign.bundle.js", // string (default)
     // the filename template for entry chunks
-    publicPath: "./public", // string
-    // the url to the output directory resolved relative to the HTML page
   },
   devServer: {
     static: {
@@ -25,6 +24,7 @@ module.exports = {
     compress: true,
     port: 9000,
     hot: true,
+    open: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -33,13 +33,40 @@ module.exports = {
       filename: "index.html",
       manifest: "./public/manifest.json",
     }),
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
     extensions: [".ts", ".tsx", ".js"],
+    fallback: {
+      "stream": require.resolve("stream-browserify"),
+      "buffer": require.resolve("buffer/"),
+    },
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: [
+          {
+            loader: "source-map-loader",
+            options: {
+              filterSourceMappingUrl: (url, resourcePath) => {
+                if (/.*\/node_modules\/.*/.test(resourcePath)) {
+                  return false;
+                }
+                return true;
+              },
+            },
+          },
+        ],
+      },
       {
         loader: "babel-loader",
         test: /\.js$|jsx/,
@@ -47,7 +74,7 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
       },
       {

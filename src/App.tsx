@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import Request_LogIn from './components/req_auth';
+import RequestLogIn from './components/req_auth';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <h1>Crypto Wallet Log In & Signing Example</h1>
         <h2>Using ReactJS</h2>
         
-        <Request_LogIn />
+        <RequestLogIn />
       </header>
     </div>
   );

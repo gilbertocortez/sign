@@ -1,110 +1,112 @@
-//import { toBuffer, ecrecover, pubToAddress, BN, rlphash, bufferToHex } from 'ethereumjs-util'
-
 import { SignTypedDataVersion, recoverTypedSignature } from '@metamask/eth-sig-util';
 
+const RequestSignature = (props: any) => {
+  // Step 2:  Once user has authorized the use of its crypto wallet a signature can
+  //          be requested
 
-const Request_Signature = (props: any) => {
-    // Step 2:  Once user has authorized the use of its crypto wallet a signature can
-    //          be requested
+  async function sign_TypedDataV4() {
+    // Set up message parameters
+    const msgParamsOg = {
+      domain: {
+        chainId: 1,
+        name: "Crypto World Test",
+      },
+      message: {
+        name: "Translation",
+        start: {
+          x: 200,
+          y: 600,
+        },
+        end: {
+          x: 300,
+          y: 350,
+        },
+        cost: 50,
+      },
+      primaryType: "WeightedVector",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "chainId", type: "uint256" },
+        ],
+        WeightedVector: [
+          { name: "name", type: "string" },
+          { name: "start", type: "Point" },
+          { name: "end", type: "Point" },
+          { name: "cost", type: "uint256" },
+        ],
+        Point: [
+          { name: "x", type: "uint256" },
+          { name: "y", type: "uint256" },
+        ],
+      },
+    };
 
-    async function sign_TypedDataV4() {
-        const msgParamsOg = {
-            domain: {
-                // Defining the chain: 1 - Ethereum Main Net
-                chainId: 1,
-                // Friendly name
-                name: "Initial Example Contract",
-                // Additional way of verifying contract to make sure you are establishing contracts with the proper entity
-                verifyingContract: "this",
-                // Just let's you know the latest version. Definitely make sure the field name is correct.
-                version: "1",
-            },
+    // Set up variables for message signing
+    let msgParams = JSON.stringify(msgParamsOg);
+    let account = props.account;
+    var params = [account, msgParams];
+    var method = "eth_signTypedData_v4";
+    // Debug
+    //console.log('User Address:' + account);
 
-            // Defining the message signing data content.
-            message: {
-                Request: "Please complete your authentication by signing this",
-                username: "test_user",
-            },
-            // Refers to the keys of the *types* object below.
-            primaryType: "LogIn",
-            types: {
-                EIP712Domain: [
-                    {
-                        name: "name",
-                        type: "string",
-                    },
-                    {
-                        name: "version",
-                        type: "string",
-                    },
-                    {
-                        name: "chainId",
-                        type: "uint256",
-                    },
-                    {
-                        name: "verifyingContract",
-                        type: "address",
-                    },
-                ],
-                // Refer to PrimaryType
-                LogIn: [
-                    {
-                        name: "username",
-                        type: "string",
-                    },
-                ],
-            },
-        };
-        let msgParams = JSON.stringify(msgParamsOg);
+    // Send signature request
+    (window as any).ethereum.sendAsync(
+      {
+        method,
+        params,
+        account,
+      },
+      async function (err: Error, result: any) {
+        if (err) return console.dir(err);
+        if (result.error) {
+          alert(result.error.message);
+          return console.error("ERROR", result);
+        }
+        // Debug
+        //console.log('TYPED SIGNED:' + JSON.stringify(result.result));
 
-        let account = props.account;
-        var params = [account, msgParams];
-        var method = "eth_signTypedData_v4";
-        console.log('User Address:' + account);
+        // Store retrieved signature result
+        const signature: string = result.result;
 
-        (window as any).ethereum.sendAsync(
-            {
-                method,
-                params,
-                account,
-            },
-            async function (err: Error, result: any) {
-                if (err) return console.dir(err);
-                if (result.error) {
-                    alert(result.error.message);
-                    return console.error("ERROR", result);
-                }
-                //console.log('TYPED SIGNED:' + JSON.stringify(result.result));
+        // Verify signature with recoverTypedSignature()
+        let restored = recoverTypedSignature({
+          signature,
+          version: SignTypedDataVersion.V4,
+          data: msgParamsOg as any
+        });
 
-                let signature = result.result;
+        // Debug
+        //console.log(restored);
 
-                const restored = recoverTypedSignature({
-                    data: msgParamsOg as any,
-                    signature,
-                    version: SignTypedDataVersion.V4,
-                  });
+        // Check to confirm that the signature address is the same as the original user wallet address
+        if ( restored === account ) {
+          alert('Successfully recovered signer as ' + restored);
+        } else {
+          alert(
+            'Failed to verify signer when comparing ' + account + ' to ' + restored
+          );
+        }
 
-                console.log(restored);
-
-            }
-        );
-    }
+      }
+    );
+  }
 
 
-    return (
-        <div>
-            <button
-                className='btn_main'
-                type="button"
-                onClick={async (e) => {
-                    e.preventDefault();
-                    sign_TypedDataV4();
-                }}
-            >
-                Sign Now
-            </button>
-        </div>
-    )
+  return (
+    <div>
+      <button
+        className='btn_main'
+        type="button"
+        onClick={async (e) => {
+          e.preventDefault();
+          sign_TypedDataV4();
+        }}
+      >
+        Sign Now
+      </button>
+    </div>
+  )
 };
 
-export default Request_Signature;
+export default RequestSignature;
