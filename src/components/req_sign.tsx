@@ -94,16 +94,18 @@ const RequestSignature = (props: any) => {
 
 
   return (
-    <div>
+    <div className='container'>
+      <p>Step 2: Sign a message or other data via the eth_signTypedData_v4 method.</p>
+      <p>Once the message is signed, the application will verify the signature to confirm that it was originated by the user wallet.</p>
       <button
-        className='btn_main'
+        className='button-52'
         type="button"
         onClick={async (e) => {
           e.preventDefault();
           sign_TypedDataV4();
         }}
       >
-        Sign Now
+        Sign A Test (v4) Message Now
       </button>
     </div>
   )

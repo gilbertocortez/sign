@@ -7,8 +7,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Crypto Wallet Log In & Signing Example</h1>
-        <h2>Using ReactJS</h2>
+        <h1>MetaMask Wallet Log In and Signing (v4) Example</h1>
+        <h2>Using ReactJS and the @metamask/eth-sig-util package</h2>
         
         <RequestLogIn />
       </header>
